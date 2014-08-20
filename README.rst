@@ -2,7 +2,7 @@
 dj-geocoding
 ============
 
-.. image:: https://travis-ci.org/bennylope/dj-geocoding.png?branch=master
+.. image:: https://travis-ci.org/bennylope/dj-geocoding.svg?branch=master
     :target: https://travis-ci.org/bennylope/dj-geocoding
 
 Django features for the Geocodio geocoding service
