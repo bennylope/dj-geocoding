@@ -27,6 +27,13 @@ class TestMixins(unittest.TestCase):
         # Decimals
         geo.point = (Decimal(123), Decimal(123))
 
+    def test_none_types(self):
+        """Ensure that a single NoneType value is converted"""
+        geo = models.GeoFieldsModel()
+        geo.point = None
+        self.assertEqual(geo.point, (None, None))
+
+
     @patch('dj_geocoding.models.GeocodioClient.geocode')
     def test_geocode(self, mocked_geocode):
         """Ensure that geocoding works with various address arguments"""
@@ -52,12 +59,12 @@ class TestMixins(unittest.TestCase):
             result[0],
             Decimal('37.554895702703'),
             places=5,
-        )
+            )
         self.assertAlmostEqual(
             result[1],
             Decimal('-77.457561054053997'),
             places=5,
-        )
+            )
 
         # If present, called
         geotest = CoolPointTest()
@@ -66,12 +73,12 @@ class TestMixins(unittest.TestCase):
             result[0],
             Decimal('37.554895702703'),
             places=5,
-        )
+            )
         self.assertAlmostEqual(
             result[1],
             Decimal('-77.457561054053997'),
             places=5,
-        )
+            )
 
         # If not present, not called
         geotest = PointTest()

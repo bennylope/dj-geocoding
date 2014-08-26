@@ -62,6 +62,8 @@ class GeoFieldsModel(models.Model):
 
         :returns: tuple of the latitude, longitude of the point
         """
+        if point_tuple is None:
+            return None, None
         try:
             assert len(point_tuple) == 2
         except AssertionError:
