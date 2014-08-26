@@ -5,7 +5,7 @@ dj-geocoding
 .. image:: https://travis-ci.org/bennylope/dj-geocoding.svg?branch=master
     :target: https://travis-ci.org/bennylope/dj-geocoding
 
-Django features for the Geocodio geocoding service
+Django features for simple geocoding. Current support for the Geocodio geocoding service
 
 Installing
 ==========
