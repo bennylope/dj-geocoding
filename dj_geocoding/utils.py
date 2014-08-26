@@ -11,12 +11,19 @@ def bulk_geocode(qs, *args, **kwargs):
 
     :returns: the slice of the queryset provided that was geocoded.
     """
-    # TODO use 'format_address' method/attribute
-    client = GeocodioClient(settings.GEOCODIO_KEY)
-    geocoded_addresses = client.geocode([location.address for location in qs])
+    separator = kwargs.pop('separator', ', ')
+
+    def location_name(location):
+        # IF qs.model has attr 'get_display_address, use that
+        if hasattr(qs.model, 'get_display_address'):
+            return location.get_display_address()
+        return separator.join([getattr(location, arg) for arg in args])
+
+    client = GeocodioClient(settings.GEOCODIO_API_KEY)
+    geocoded_addresses = client.geocode([location_name(location) for location in qs])
     with transaction.commit_on_success():
         for location in qs:
-            location.location = geocoded_addresses.addresses.get[location.address].coords
+            location.point = geocoded_addresses.get(location_name(location)).coords
             location.save()
     # TODO return only portion of the qs that was geocoded
     return qs

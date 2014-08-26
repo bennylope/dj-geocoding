@@ -17,10 +17,11 @@ try:
             "django.contrib.contenttypes",
             "django.contrib.sites",
             "dj_geocoding",
+            "test_app",
         ],
         SITE_ID=1,
         NOSE_ARGS=['-s'],
-        GEOCODIO_KEY="blahblahblah",
+        GEOCODIO_API_KEY="blahblahblah",
     )
 
     try:

@@ -19,23 +19,20 @@ class TestMixins(unittest.TestCase):
 
     def test_point_types(self):
         """Ensure point setter only accepts numeric types"""
-        geo = models.GeoFieldsMixin()
+        geo = models.GeoFieldsModel()
         # Floats
         geo.point = (123.12, 123.12)
         # Ints
         geo.point = (123, 123)
         # Decimals
-        geo.point = (Decimal('123'), Decimal('123'))
-        # Anything else
-        with self.assertRaises(TypeError):
-            geo.point = ('123', 123)
+        geo.point = (Decimal(123), Decimal(123))
 
     @patch('dj_geocoding.models.GeocodioClient.geocode')
     def test_geocode(self, mocked_geocode):
         """Ensure that geocoding works with various address arguments"""
 
         mocked_result = MagicMock()
-        mocked_result.coords = (12, 18)
+        mocked_result.coords = (37.554895702703, -77.457561054053997)
         mocked_geocode.return_value = mocked_result
 
         # This could probably be mocked as well
@@ -43,20 +40,38 @@ class TestMixins(unittest.TestCase):
             point = None
             address = "100 main st"
 
+        # This could probably be mocked as well
         class CoolPointTest(PointTest):
-
             def get_display_address(self):
                 return "w00t"
 
         # No method, but args supplied
         geotest = PointTest()
         result = geotest.geocode('address', save=False)
-        self.assertEqual(result.point, (12, 18))
+        self.assertAlmostEqual(
+            result[0],
+            Decimal('37.554895702703'),
+            places=5,
+        )
+        self.assertAlmostEqual(
+            result[1],
+            Decimal('-77.457561054053997'),
+            places=5,
+        )
 
         # If present, called
         geotest = CoolPointTest()
         result = geotest.geocode(save=False)
-        self.assertEqual(result.point, (12, 18))
+        self.assertAlmostEqual(
+            result[0],
+            Decimal('37.554895702703'),
+            places=5,
+        )
+        self.assertAlmostEqual(
+            result[1],
+            Decimal('-77.457561054053997'),
+            places=5,
+        )
 
         # If not present, not called
         geotest = PointTest()

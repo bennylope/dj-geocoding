@@ -20,7 +20,7 @@ Then use it in a project::
 
 Add your geocoding service API credentials to your `settings.py` file::
 
-    GEOCODIO_KEY="SOMEAPIKEY"
+    GEOCODIO_API_KEY="SOMEAPIKEY"
 
 Model
 =====

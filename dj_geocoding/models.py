@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from decimal import Decimal
+import decimal
+
 from django.conf import settings
 from django.db import models
 from django.db.models.query import QuerySet
@@ -27,7 +28,6 @@ class GeocodingManager(models.Manager):
     """
     Manager class that provides a bulk geocoding queryset method.
     """
-
     def get_query_set(self):
         return GeocodingQuerySet(self.model, using=self._db)
 
@@ -35,7 +35,7 @@ class GeocodingManager(models.Manager):
         return GeocodingQuerySet(self.model, using=self._db)
 
 
-class GeoFieldsMixin(object):
+class GeoFieldsModel(models.Model):
     """
     Mixin for models that require geolocation but do not make use of GeoDjagno
     features.
@@ -44,6 +44,9 @@ class GeoFieldsMixin(object):
             blank=True)
     longitude = models.DecimalField(decimal_places=15, max_digits=18, null=True,
             blank=True)
+
+    class Meta:
+        abstract = True
 
     def _get_point(self):
         """
@@ -63,25 +66,12 @@ class GeoFieldsMixin(object):
             assert len(point_tuple) == 2
         except AssertionError:
             raise Exception("point_tuple must have exactly two elements")
-        if type(point_tuple[0]) not in [int, float, Decimal] or \
-                type(point_tuple[1]) not in [int, float, Decimal]:
-            raise TypeError("point_tuple elements must be numeric")
-        # Force to byte string b/c Python 2.6 Decimal class cannot convert from
-        # float values, throws "Cannot convert float to Decimal" exception.
-        self.latitude = str(point_tuple[0])
-        self.longitude = str(point_tuple[1])
+
+        self.latitude = decimal.Decimal(str(point_tuple[0]))
+        self.longitude = decimal.Decimal(str(point_tuple[1]))
         return self.latitude, self.longitude
 
     point = property(_get_point, _set_point)
-
-    def get_display_address(self):
-        """
-        Formats the address from model components like street address, city,
-        state, etc.
-
-        :returns: string with the full address
-        """
-        raise NotImplementedError
 
     @property
     def has_geolocation(self):
@@ -110,15 +100,16 @@ class GeocoderMixin(object):
                     " get_display_address method is present")
         else:
             address = separator.join([getattr(self, arg) for arg in args])
-        client = GeocodioClient(settings.GEOCODIO_KEY)
+        client = GeocodioClient(settings.GEOCODIO_API_KEY)
         result = client.geocode(address)
-        self.point = result.coords
+        # TODO handle None
+        self.point = decimal.Decimal(str(result.coords[0])), decimal.Decimal(str(result.coords[1]))
         if save:
             self.save()
-        return self
+        return self.point
 
 
-class GeoBase(GeoFieldsMixin, GeocoderMixin, models.Model):
+class GeoBase(GeoFieldsModel, GeocoderMixin):
     """
     Base model class that provides dual fields for storing latitude and
     longitude, respectively, and methods for dealing with points and geocoding.
