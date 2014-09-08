@@ -86,3 +86,14 @@ The manager class implements a subclassed `QuerySet` with a `geocode` method::
 This returns a queryset of the objects updated (or not) that fit within the
 limits of the geocoding service. It is a convenient interface tot he
 `bulk_geocode` function.
+
+Admin site
+==========
+
+The `GeocodedFilter` filter can be used to filter locations in the admin based
+on whether they have been geolocated or not.
+
+The `GeolocateMixin` class can be added to your `ModelAdmin` definition to add
+the `geocode_address` admin action. This adds the "geocode address" action to
+the admin actions dropdown menu and then will allow you to geocode an entire
+queryset from the admin.

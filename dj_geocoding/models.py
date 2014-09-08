@@ -75,11 +75,12 @@ class GeoFieldsModel(models.Model):
 
     point = property(_get_point, _set_point)
 
-    @property
     def has_geolocation(self):
         if self.latitude is not None and self.longitude is not None:
             return True
         return False
+    has_geolocation.boolean = True
+    has_geolocation.short_description = "Geocoded"
 
 
 class GeocoderMixin(object):
