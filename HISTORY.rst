@@ -3,6 +3,12 @@
 History
 -------
 
+0.2.1 (2014-12-02)
+++++++++++++++++++
+
+* Removes reliance on queryset `geocode` method in admin action
+* Adds docs
+
 0.2.0 (2014-09-08)
 ++++++++++++++++++
 
