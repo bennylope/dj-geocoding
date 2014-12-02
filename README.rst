@@ -7,6 +7,8 @@ dj-geocoding
 
 Django features for simple geocoding. Current support for the Geocodio geocoding service
 
+Read the full docs on `Read the Docs <http://dj-geocoding.readthedocs.org/en/latest/>`_.
+
 Installing
 ==========
 
