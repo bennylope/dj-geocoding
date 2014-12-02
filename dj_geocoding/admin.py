@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
+from .utils import bulk_geocode
 
 
 class GeocodedFilter(SimpleListFilter):
@@ -41,7 +42,7 @@ class GeolocateMixin(object):
         locations for the selected locations.
         """
         try:
-            geocoded = queryset.geocode()
+            geocoded = bulk_geocode(queryset)
         except AttributeError:
             # TODO Add a helpful error message here
             raise
